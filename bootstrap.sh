@@ -52,6 +52,7 @@ echo "${bldpur}Chef server setup${txtrst}"
 echo
 
 mkdir -p /etc/chef
+mkdir -p /tmp/chef-solo
 
 (cat << _EOF_
 file_cache_path "/tmp/chef-solo"
@@ -66,12 +67,13 @@ _EOF_
     "webui_enabled": true,
     "init_style": "runit"
   },
-  "run_list": [ "recipe[chef-server::rubygems-install]" ]
+  "run_list": [ "recipe[apt::default]", "recipe[rabbitmq::default]", "recipe[chef-server::rubygems-install]" ]
 }
 _EOF_
 ) > ~/chef.json
 
 echo "${bldblu}Fetching cookbook dependencies${txtrst}"
+echo
 
 mkdir -p $COOKBOOKS_PATH
 
@@ -85,15 +87,23 @@ for cookbook in $REQUIRED_COOKBOOKS; do
         mkdir -p $file
         cd $file
         tar --strip-components=1 -zxf ${file}.tgz
+	rm ${file}.tgz
         cd -
     fi
 done
 
+echo
+echo "${bldgrn}Installing chef-server with chef-solo ${txtrst}"
+echo
+
 chef-solo -c /etc/chef/solo.rb -j ~/chef.json 
 
-mkdir -p ~/.chef
-cp /etc/chef/validation.pem /etc/chef/webui.pem ~/.chef
-chown -R $USER ~/.chef
+echo 
+echo "${bldpur}Bug fixing  /etc/apt/sources.list.d/opscode-source.list error caused in gecode cookbook${txtrst}"
+echo
 
-echo "${bldcyn}Done.${txtrts}"
+echo "deb http://apt.opscode.com squeeze-0.10 main" >  /etc/apt/sources.list.d/opscode-source.list
+
+echo
+echo "${bldcyn}Done.${txtrst}"
 
