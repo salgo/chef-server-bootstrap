@@ -29,7 +29,7 @@ echo "${bldblu}Installing Ruby and dependencies${txtrst}"
 echo
 
 apt-get -y update 
-apt-get -y install ruby ruby-dev libopenssl-ruby rdoc ri irb build-essential wget ssl-cert curl 
+apt-get -y install ruby ruby-dev libopenssl-ruby rdoc ri irb build-essential wget ssl-cert curl lsb-release libshadow-ruby1.8
 
 echo
 echo "${bldred}Installing RubyGems${txtrst}"
@@ -97,12 +97,6 @@ echo "${bldgrn}Installing chef-server with chef-solo ${txtrst}"
 echo
 
 chef-solo -c /etc/chef/solo.rb -j ~/chef.json 
-
-echo 
-echo "${bldpur}Bug fixing  /etc/apt/sources.list.d/opscode-source.list error caused in gecode cookbook${txtrst}"
-echo
-
-echo "deb http://apt.opscode.com squeeze-0.10 main" >  /etc/apt/sources.list.d/opscode-source.list
 
 echo
 echo "${bldcyn}Done.${txtrst}"
